@@ -4,8 +4,9 @@ import { createClient } from '@/lib/supabase/server';
 // GET /api/notes/[id] - Get a single note
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
+    const params = await props.params;
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
@@ -38,8 +39,9 @@ export async function GET(
 // PUT /api/notes/[id] - Update a note
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
+    const params = await props.params;
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
@@ -111,8 +113,9 @@ export async function PUT(
 // DELETE /api/notes/[id] - Delete a note
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
+    const params = await props.params;
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();

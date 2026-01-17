@@ -1,6 +1,7 @@
 'use client';
 
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import { BubbleMenu } from '@tiptap/extension-bubble-menu';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Highlight from '@tiptap/extension-highlight';
@@ -185,33 +186,7 @@ export function NoteEditor({
                 </ToolbarButton>
             </div>
 
-            {/* Bubble Menu for quick formatting */}
-            {editor && (
-                <BubbleMenu
-                    editor={editor}
-                    tippyOptions={{ duration: 100 }}
-                    className="flex items-center gap-1 bg-gray-900 dark:bg-gray-100 rounded-lg shadow-lg p-1"
-                >
-                    <BubbleButton
-                        onClick={() => editor.chain().focus().toggleBold().run()}
-                        active={editor.isActive('bold')}
-                    >
-                        <Bold className="w-3.5 h-3.5" />
-                    </BubbleButton>
-                    <BubbleButton
-                        onClick={() => editor.chain().focus().toggleItalic().run()}
-                        active={editor.isActive('italic')}
-                    >
-                        <Italic className="w-3.5 h-3.5" />
-                    </BubbleButton>
-                    <BubbleButton
-                        onClick={() => editor.chain().focus().toggleHighlight().run()}
-                        active={editor.isActive('highlight')}
-                    >
-                        <Highlighter className="w-3.5 h-3.5" />
-                    </BubbleButton>
-                </BubbleMenu>
-            )}
+
 
             {/* Editor Content */}
             <EditorContent editor={editor} />
