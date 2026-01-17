@@ -1,0 +1,139 @@
+/* Google Fonts - Must be first */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+
+/* Tailwind CSS */
+@import "tailwindcss";
+
+:root {
+  /* Primary Colors */
+  --primary: #8D1CDF;
+  --primary-hover: #7316b5;
+
+  /* Background Colors */
+  --background: #F9FAFB;
+  --background-dark: #0f1115;
+  --surface-dark: #181b21;
+
+  /* Custom Palette */
+  --lilac: #EEE2F4;
+  --cream: #FFF6E7;
+  --grey-100: #E5E7EB;
+  --pink: #FCE7F3;
+  --mint: #E4F5DB;
+
+  /* Text Colors */
+  --foreground: #111827;
+  --foreground-muted: #6B7280;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f1115;
+    --foreground: #F9FAFB;
+    --foreground-muted: #9CA3AF;
+  }
+}
+
+/* Base Styles */
+body {
+  font-family: "Bricolage Grotesque", sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Blob Background Effect */
+.blob {
+  position: absolute;
+  filter: blur(80px);
+  opacity: 0.4;
+  z-index: -1;
+  border-radius: 50%;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(to right, var(--primary), #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--grey-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+/* Dark mode scrollbar */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track {
+    background: var(--surface-dark);
+  }
+}
+
+/* Animation Utilities */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Glass Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass {
+    background: rgba(15, 17, 21, 0.8);
+  }
+}

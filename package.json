@@ -1,0 +1,44 @@
+{
+  "name": "amebo",
+  "version": "0.1.0",
+  "description": "AI-powered note-taking SaaS",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.90.1",
+    "@tiptap/extension-highlight": "^3.15.3",
+    "@tiptap/extension-link": "^3.15.3",
+    "@tiptap/extension-placeholder": "^3.15.3",
+    "@tiptap/extension-task-item": "^3.15.3",
+    "@tiptap/extension-task-list": "^3.15.3",
+    "@tiptap/pm": "^3.15.3",
+    "@tiptap/react": "^3.15.3",
+    "@tiptap/starter-kit": "^3.15.3",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.562.0",
+    "next": "16.1.2",
+    "openai": "^6.16.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "stripe": "^20.1.2",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
