@@ -8,7 +8,7 @@ import {
 } from './base';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2024-12-18.acacia',
+    typescript: true,
 });
 
 // Stripe price IDs - these should match your Stripe dashboard
@@ -122,7 +122,7 @@ export class StripeProvider implements PaymentProvider {
 
     async getSubscription(subscriptionId: string): Promise<Subscription | null> {
         try {
-            const sub = await stripe.subscriptions.retrieve(subscriptionId);
+            const sub = await stripe.subscriptions.retrieve(subscriptionId) as unknown as Stripe.Subscription;
 
             // Determine tier from price ID
             let tier: 'free' | 'pro' | 'team' | 'enterprise' = 'free';
@@ -139,8 +139,8 @@ export class StripeProvider implements PaymentProvider {
                 status: sub.status === 'active' ? 'active' :
                     sub.status === 'trialing' ? 'trialing' :
                         sub.status === 'past_due' ? 'past_due' : 'canceled',
-                currentPeriodStart: new Date(sub.current_period_start * 1000),
-                currentPeriodEnd: new Date(sub.current_period_end * 1000),
+                currentPeriodStart: new Date((sub as any).current_period_start * 1000),
+                currentPeriodEnd: new Date((sub as any).current_period_end * 1000),
                 cancelAtPeriodEnd: sub.cancel_at_period_end,
             };
         } catch (error) {

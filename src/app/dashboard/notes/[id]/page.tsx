@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -17,7 +17,8 @@ import { NoteEditor } from '@/components/editor';
 import { formatRelativeTime } from '@/lib/utils';
 import { Note } from '@/types';
 
-export default function NotePage({ params }: { params: { id: string } }) {
+export default function NotePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const [note, setNote] = useState<Note | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -28,11 +29,11 @@ export default function NotePage({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         fetchNote();
-    }, [params.id]);
+    }, [id]);
 
     const fetchNote = async () => {
         try {
-            const response = await fetch(`/api/notes/${params.id}`);
+            const response = await fetch(`/api/notes/${id}`);
             if (!response.ok) throw new Error('Failed to fetch note');
             const data = await response.json();
             setNote(data);
@@ -49,7 +50,7 @@ export default function NotePage({ params }: { params: { id: string } }) {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const response = await fetch(`/api/notes/${params.id}`, {
+            const response = await fetch(`/api/notes/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -87,7 +88,7 @@ export default function NotePage({ params }: { params: { id: string } }) {
                 const newSummary = data.summary;
 
                 // Save the summary to the note
-                await fetch(`/api/notes/${params.id}`, {
+                await fetch(`/api/notes/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ summary: newSummary }),
@@ -107,7 +108,7 @@ export default function NotePage({ params }: { params: { id: string } }) {
         if (!confirm('Are you sure you want to delete this note?')) return;
 
         try {
-            const response = await fetch(`/api/notes/${params.id}`, {
+            const response = await fetch(`/api/notes/${id}`, {
                 method: 'DELETE',
             });
 

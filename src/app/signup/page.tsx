@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Sparkles, Mail, Lock, User, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
-export default function SignupPage() {
+function SignupContent() {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -18,6 +18,7 @@ export default function SignupPage() {
     const plan = searchParams.get('plan');
 
     const handleSignup = async (e: React.FormEvent) => {
+        // ... existing handleSignup logic ...
         e.preventDefault();
         setLoading(true);
         setError('');
@@ -280,5 +281,17 @@ export default function SignupPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SignupPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB] dark:bg-[#0f1115]">
+                <Loader2 className="w-8 h-8 animate-spin text-[#8D1CDF]" />
+            </div>
+        }>
+            <SignupContent />
+        </Suspense>
     );
 }

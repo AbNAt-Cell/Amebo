@@ -108,7 +108,7 @@ Respond in JSON:
     async transcribe(audio: Buffer, mimeType: string): Promise<AITranscriptionResult> {
         try {
             // Create a File-like object for the API
-            const file = new File([audio], 'audio.webm', { type: mimeType });
+            const file = new File([audio as any], 'audio.webm', { type: mimeType });
 
             const response = await openai.audio.transcriptions.create({
                 file,
