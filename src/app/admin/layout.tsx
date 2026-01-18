@@ -21,13 +21,13 @@ export default function AdminLayout({
     const [loading, setLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
-    const supabase = createClient();
 
     useEffect(() => {
         checkAdmin();
     }, []);
 
     const checkAdmin = async () => {
+        const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
 
         if (!user) {
