@@ -18,32 +18,46 @@ function SignupContent() {
     const plan = searchParams.get('plan');
 
     const handleSignup = async (e: React.FormEvent) => {
-        // ... existing handleSignup logic ...
         e.preventDefault();
         setLoading(true);
         setError('');
 
-        const supabase = createClient();
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                emailRedirectTo: `${window.location.origin}/auth/callback`,
-                data: {
-                    full_name: fullName,
-                    plan: plan || 'free',
+        try {
+            const supabase = createClient();
+
+            // Simplified signup - remove metadata temporarily to debug
+            const { data, error: signupError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/auth/callback`,
+                    data: {
+                        full_name: fullName,
+                    },
                 },
-            },
-        });
+            });
 
-        if (error) {
-            setError(error.message);
+            if (signupError) {
+                console.error('Signup error:', signupError);
+                setError(signupError.message);
+                setLoading(false);
+                return;
+            }
+
+            // Check if user was created or if email confirmation is needed
+            if (data?.user?.identities?.length === 0) {
+                setError('An account with this email already exists.');
+                setLoading(false);
+                return;
+            }
+
+            setSuccess(true);
             setLoading(false);
-            return;
+        } catch (err) {
+            console.error('Unexpected error:', err);
+            setError('An unexpected error occurred. Please try again.');
+            setLoading(false);
         }
-
-        setSuccess(true);
-        setLoading(false);
     };
 
     const handleGoogleSignup = async () => {
