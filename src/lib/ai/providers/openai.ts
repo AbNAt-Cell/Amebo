@@ -14,8 +14,17 @@ const openai = new OpenAI({
 export class OpenAIProvider implements AIProvider {
     name = 'openai' as const;
 
+    private getClient() {
+        const apiKey = process.env.OPENAI_API_KEY;
+        if (!apiKey) {
+            throw new AIProviderError('OPENAI_API_KEY is not set', 'openai');
+        }
+        return new OpenAI({ apiKey });
+    }
+
     async summarize(content: string): Promise<AISummaryResult> {
         try {
+            const openai = this.getClient();
             const response = await openai.chat.completions.create({
                 model: 'gpt-4o-mini',
                 messages: [
@@ -54,6 +63,7 @@ Respond in JSON format:
 
     async generateEmbedding(text: string): Promise<number[]> {
         try {
+            const openai = this.getClient();
             const response = await openai.embeddings.create({
                 model: 'text-embedding-3-small',
                 input: text,
@@ -66,6 +76,7 @@ Respond in JSON format:
 
     async organize(content: string): Promise<AIOrganizationResult> {
         try {
+            const openai = this.getClient();
             const response = await openai.chat.completions.create({
                 model: 'gpt-4o-mini',
                 messages: [
@@ -107,6 +118,7 @@ Respond in JSON:
 
     async transcribe(audio: Buffer, mimeType: string): Promise<AITranscriptionResult> {
         try {
+            const openai = this.getClient();
             // Create a File-like object for the API
             const file = new File([audio as any], 'audio.webm', { type: mimeType });
 
@@ -131,6 +143,7 @@ Respond in JSON:
         context?: string
     ): Promise<string> {
         try {
+            const openai = this.getClient();
             const systemMessage = context
                 ? `You are Amebo AI, a helpful assistant for note-taking. Here is the relevant context from the user's notes:\n\n${context}`
                 : 'You are Amebo AI, a helpful assistant for note-taking and productivity.';
