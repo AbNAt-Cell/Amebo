@@ -7,13 +7,20 @@ import {
     AIProviderError,
 } from './base';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '');
-
 export class GeminiProvider implements AIProvider {
     name = 'gemini' as const;
 
+    private getClient() {
+        const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
+        if (!apiKey) {
+            throw new AIProviderError('GOOGLE_GEMINI_API_KEY is not set', 'gemini');
+        }
+        return new GoogleGenerativeAI(apiKey);
+    }
+
     async summarize(content: string): Promise<AISummaryResult> {
         try {
+            const genAI = this.getClient();
             const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
             const prompt = `Analyze this note content and provide a summary in JSON format:
@@ -48,6 +55,7 @@ ${content}`;
 
     async generateEmbedding(text: string): Promise<number[]> {
         try {
+            const genAI = this.getClient();
             const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
             const result = await model.embedContent(text);
             return result.embedding.values;
@@ -58,6 +66,7 @@ ${content}`;
 
     async organize(content: string): Promise<AIOrganizationResult> {
         try {
+            const genAI = this.getClient();
             const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
             const prompt = `Analyze this note and suggest organization in JSON format:
@@ -96,6 +105,7 @@ ${content}`;
         context?: string
     ): Promise<string> {
         try {
+            const genAI = this.getClient();
             const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
             const systemPrompt = context
@@ -114,6 +124,7 @@ ${content}`;
     }
     async transcribe(audio: Buffer, mimeType: string): Promise<AITranscriptionResult> {
         try {
+            const genAI = this.getClient();
             const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
             const audioBase64 = audio.toString('base64');

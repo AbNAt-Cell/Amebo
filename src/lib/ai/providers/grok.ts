@@ -7,16 +7,23 @@ import {
 } from './base';
 
 // Grok uses OpenAI-compatible API
-const grok = new OpenAI({
-    apiKey: process.env.GROK_API_KEY,
-    baseURL: 'https://api.x.ai/v1',
-});
-
 export class GrokProvider implements AIProvider {
     name = 'grok' as const;
 
+    private getClient() {
+        const apiKey = process.env.GROK_API_KEY;
+        if (!apiKey) {
+            throw new AIProviderError('GROK_API_KEY is not set', 'grok');
+        }
+        return new OpenAI({
+            apiKey,
+            baseURL: 'https://api.x.ai/v1',
+        });
+    }
+
     async summarize(content: string): Promise<AISummaryResult> {
         try {
+            const grok = this.getClient();
             const response = await grok.chat.completions.create({
                 model: 'grok-beta',
                 messages: [
@@ -60,6 +67,7 @@ export class GrokProvider implements AIProvider {
 
     async organize(content: string): Promise<AIOrganizationResult> {
         try {
+            const grok = this.getClient();
             const response = await grok.chat.completions.create({
                 model: 'grok-beta',
                 messages: [
@@ -100,6 +108,7 @@ export class GrokProvider implements AIProvider {
         context?: string
     ): Promise<string> {
         try {
+            const grok = this.getClient();
             const systemMessage = context
                 ? `You are Amebo AI. Context from user's notes:\n${context}`
                 : 'You are Amebo AI, a note-taking assistant.';

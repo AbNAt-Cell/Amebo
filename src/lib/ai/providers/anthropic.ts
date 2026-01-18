@@ -6,15 +6,20 @@ import {
     AIProviderError,
 } from './base';
 
-const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
 export class AnthropicProvider implements AIProvider {
     name = 'anthropic' as const;
 
+    private getClient() {
+        const apiKey = process.env.ANTHROPIC_API_KEY;
+        if (!apiKey) {
+            throw new AIProviderError('ANTHROPIC_API_KEY is not set', 'anthropic');
+        }
+        return new Anthropic({ apiKey });
+    }
+
     async summarize(content: string): Promise<AISummaryResult> {
         try {
+            const anthropic = this.getClient();
             const message = await anthropic.messages.create({
                 model: 'claude-3-haiku-20240307',
                 max_tokens: 1024,
@@ -62,6 +67,7 @@ ${content}`,
 
     async organize(content: string): Promise<AIOrganizationResult> {
         try {
+            const anthropic = this.getClient();
             const message = await anthropic.messages.create({
                 model: 'claude-3-haiku-20240307',
                 max_tokens: 1024,
@@ -105,6 +111,7 @@ ${content}`,
         context?: string
     ): Promise<string> {
         try {
+            const anthropic = this.getClient();
             const systemPrompt = context
                 ? `You are Amebo AI, a note-taking assistant. Here's context from the user's notes:\n${context}`
                 : 'You are Amebo AI, a helpful note-taking assistant.';
