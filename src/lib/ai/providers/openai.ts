@@ -7,10 +7,6 @@ import {
     AIProviderError,
 } from './base';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
 export class OpenAIProvider implements AIProvider {
     name = 'openai' as const;
 
