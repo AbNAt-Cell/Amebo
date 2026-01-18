@@ -7,10 +7,6 @@ import {
     PaymentProviderError,
 } from './base';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    typescript: true,
-});
-
 // Stripe price IDs - these should match your Stripe dashboard
 const PRICE_IDS = {
     pro: process.env.STRIPE_PRICE_PRO || 'price_pro_monthly',
@@ -20,8 +16,17 @@ const PRICE_IDS = {
 export class StripeProvider implements PaymentProvider {
     name = 'stripe' as const;
 
+    private getClient() {
+        const apiKey = process.env.STRIPE_SECRET_KEY;
+        if (!apiKey) {
+            throw new PaymentProviderError('STRIPE_SECRET_KEY is not set', 'stripe');
+        }
+        return new Stripe(apiKey, { typescript: true });
+    }
+
     async createCheckout(plan: string, userId: string, email: string): Promise<CheckoutSession> {
         try {
+            const stripe = this.getClient();
             const priceId = PRICE_IDS[plan as keyof typeof PRICE_IDS];
             if (!priceId) {
                 throw new Error(`Invalid plan: ${plan}`);
@@ -57,6 +62,7 @@ export class StripeProvider implements PaymentProvider {
 
     async handleWebhook(payload: string, signature: string): Promise<WebhookResult> {
         try {
+            const stripe = this.getClient();
             const event = stripe.webhooks.constructEvent(
                 payload,
                 signature,
@@ -100,6 +106,7 @@ export class StripeProvider implements PaymentProvider {
 
     async getCustomerPortalUrl(customerId: string): Promise<string> {
         try {
+            const stripe = this.getClient();
             const session = await stripe.billingPortal.sessions.create({
                 customer: customerId,
                 return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing`,
@@ -112,6 +119,7 @@ export class StripeProvider implements PaymentProvider {
 
     async cancelSubscription(subscriptionId: string): Promise<void> {
         try {
+            const stripe = this.getClient();
             await stripe.subscriptions.update(subscriptionId, {
                 cancel_at_period_end: true,
             });
@@ -122,6 +130,7 @@ export class StripeProvider implements PaymentProvider {
 
     async getSubscription(subscriptionId: string): Promise<Subscription | null> {
         try {
+            const stripe = this.getClient();
             const sub = await stripe.subscriptions.retrieve(subscriptionId) as unknown as Stripe.Subscription;
 
             // Determine tier from price ID
